@@ -117,7 +117,7 @@ error(0, "Cannot find a valid provider for virtual {0}", Virtual, startcauses, C
 % At most one variant value for single-valued variants
 error(0, "'{0}' required multiple values for single-valued variant '{1}'\n    Requested 'Spec({1}={2})' and 'Spec({1}={3})'", Package, Variant, Value1, Value2, startcauses, Cause1, X, Cause2, X)
   :- attr("node", node(X, Package)),
-     node_has_variant(node(X, Package), Variant),
+     node_has_variant(node(X, Package), Variant, _),
      pkg_fact(Package, variant_single_value(Variant)),
      build(node(X, Package)),
      attr("variant_value", node(X, Package), Variant, Value1),
@@ -234,6 +234,6 @@ error(0, Msg, startcauses, TriggerID, ID1, ConstraintID, ID2)
 #defined external/1.
 #defined trigger_and_effect/3.
 #defined build/1.
-#defined node_has_variant/2.
+#defined node_has_variant/3.
 #defined provider/2.
 #defined external_version/3.
