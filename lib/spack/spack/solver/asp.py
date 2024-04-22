@@ -1299,7 +1299,7 @@ class SpackSolverSetup:
 
     def define_variant(
         self,
-        pkg: spack.package_base.PackageBase,
+        pkg: "Type[spack.package_base.PackageBase]",
         name: str,
         when: spack.spec.Spec,
         variant_def: spack.variant.Variant,
@@ -1394,7 +1394,7 @@ class SpackSolverSetup:
 
         self.gen.newline()
 
-    def variant_rules(self, pkg):
+    def variant_rules(self, pkg: "Type[spack.package_base.PackageBase]"):
         for name, conditions in sorted(pkg.variants_by_name(when=True).items()):
             self.gen.h3(f"Variant {name} in package {pkg.name}")
 

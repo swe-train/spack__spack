@@ -12,7 +12,7 @@ import inspect
 import io
 import itertools
 import re
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Type
 
 import llnl.util.lang as lang
 import llnl.util.tty.color
@@ -940,7 +940,7 @@ class Value:
 
 
 def prevalidate_variant_value(
-    pkg_cls: "type(spack.package_base.PackageBase)",
+    pkg_cls: "Type[spack.package_base.PackageBase]",
     variant: Variant,
     value: Any,
     spec: Optional["spack.spec.Spec"] = None,
@@ -964,7 +964,7 @@ def prevalidate_variant_value(
         variants_by_name = pkg_cls.variants_by_name(when=True)
         when_variants = variants_by_name[variant.name]
     except KeyError:
-        raise RuntimeError(f"variant '{variant.name}' not found in package '{spec.name}'")
+        raise RuntimeError(f"variant '{variant.name}' not found in package '{pkg_cls.name}'")
 
     # do as much prevalidation as we can -- check only those
     # variants whose when constraint intersects this spec
