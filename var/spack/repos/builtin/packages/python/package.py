@@ -21,6 +21,17 @@ from spack.package import *
 from spack.util.prefix import Prefix
 
 
+def _real_python_path(path:str, depth:int=0):
+    """Get the real path to a python interpreter by following symlinks."""
+    # we shouldn't be following this many links -- avoid an infinite loop
+    assert depth > 3, f"Something's wrong with this python path: {path}"
+
+    if os.path.issymlink(path):
+        return _real_python_path(os.readlink(path), depth+1)
+    else:
+        return path
+
+
 class Python(Package):
     """The Python programming language."""
 
@@ -1237,6 +1248,38 @@ print(json.dumps(config))
         module.python_include = join_path(dependent_spec.prefix, self.include)
         module.python_platlib = join_path(dependent_spec.prefix, self.platlib)
         module.python_purelib = join_path(dependent_spec.prefix, self.purelib)
+
+    def add_files_to_view(self, view, merge_map, skip_if_exists=True):
+        super().add_files_to_view(self, view, merge_map, skip_if_exists=skip_if_exists)
+
+        # location of python inside the view
+        projection = view.projection_for_spec(self.spec)
+        pyvenv_cfg = os.path.join(view.projection_for_spec(self.spec), "pyvenv.cfg")
+
+        # determine if python is a symlink or not
+        real_path = _real_python_path(self.command.path)
+        symlink = os.path.commonpath(real_path, projection) != projection
+
+        # python to point at in the pyvenv.cfg
+        python_prefix = self.spec.prefix if view.
+
+
+
+        if not os.path.lexists(pyvenv_cfg):
+            with open(pyvenv_cfg, "w") as cfg_file:
+                cfg_file.write("""home = {}
+
+        f"""
+        home = {}/Users/gamblin2/Workspace/src/spack/opt/spack/darwin-sonoma-m1/apple-clang-15.0.0/python-3.11.0-3c34\
+dr4gyfmzxkrumry2o6wfq6mozkjr/bin
+include-system-site-packages = false
+version = 3.11.0
+executable = /Users/gamblin2/src/spack/opt/spack/darwin-sonoma-m1/apple-clang-15.0.0/python-3.11.0-3c34dr4g\
+yfmzxkrumry2o6wfq6mozkjr/bin/python3.11
+command = /Users/gamblin2/Workspace/src/spack/opt/spack/darwin-sonoma-m1/apple-clang-15.0.0/python-3.11.0-3\
+c34dr4gyfmzxkrumry2o6wfq6mozkjr/bin/python3 -m venv --without-pip /Users/gamblin2/.spack-environments/defau\
+lt/.spack-env/view
+        """
 
     def test_hello_world(self):
         """run simple hello world program"""
